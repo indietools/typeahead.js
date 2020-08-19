@@ -18,6 +18,7 @@ var oParser = (function() {
       matchAnyQueryToken: false,
       sufficient: 5,
       indexRemote: false,
+      greedy: false,
       sorter: null,
       local: [],
       prefetch: null,

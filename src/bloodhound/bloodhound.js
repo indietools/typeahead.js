@@ -22,6 +22,8 @@ var Bloodhound = (function() {
     this.sufficient = o.sufficient;
     this.indexRemote = o.indexRemote;
 
+    this.greedy = o.greedy;
+
     this.local = o.local;
     this.remote = o.remote ? new Remote(o.remote) : null;
     this.prefetch = o.prefetch ? new Prefetch(o.prefetch) : null;
@@ -136,7 +138,11 @@ var Bloodhound = (function() {
       sync = sync || _.noop;
       async = async || _.noop;
 
-      local = this.sorter(this.index.search(query));
+      if (this.greedy && query === "") {
+        local = this.sorter(this.index.all());
+      } else {
+        local = this.sorter(this.index.search(query));
+      }
 
       // return a copy to guarantee no changes within this scope
       // as this array will get used when processing the remote results

@@ -1,5 +1,5 @@
 /*!
- * typeahead.js 1.3.1
+ * typeahead.js 1.3.2
  * https://github.com/corejavascript/typeahead.js
  * Copyright 2013-2020 Twitter, Inc. and other contributors; Licensed MIT
  */
@@ -159,7 +159,7 @@
             noop: function() {}
         };
     }();
-    var VERSION = "1.3.1";
+    var VERSION = "1.3.2";
     var tokenizers = function() {
         "use strict";
         return {
@@ -687,6 +687,7 @@
                 matchAnyQueryToken: false,
                 sufficient: 5,
                 indexRemote: false,
+                greedy: false,
                 sorter: null,
                 local: [],
                 prefetch: null,
@@ -838,6 +839,7 @@
             this.identify = o.identify;
             this.sufficient = o.sufficient;
             this.indexRemote = o.indexRemote;
+            this.greedy = o.greedy;
             this.local = o.local;
             this.remote = o.remote ? new Remote(o.remote) : null;
             this.prefetch = o.prefetch ? new Prefetch(o.prefetch) : null;
@@ -909,7 +911,11 @@
                 var that = this, local;
                 sync = sync || _.noop;
                 async = async || _.noop;
-                local = this.sorter(this.index.search(query));
+                if (this.greedy && query === "") {
+                    local = this.sorter(this.index.all());
+                } else {
+                    local = this.sorter(this.index.search(query));
+                }
                 sync(this.remote ? local.slice() : local);
                 if (this.remote && local.length < this.sufficient) {
                     this.remote.get(query, processRemote);
